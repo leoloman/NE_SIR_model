@@ -50,4 +50,58 @@ def get_PGF(Pk):
     maxk = max(Pk.keys())
     ks = np.linspace(0,maxk, maxk+1)
     Pkarray = np.array([Pk.get(k,0) for k in ks])
-    return lambda x: Pkarray.dot(x**ks)
+    # print(ks)
+    # print(Pkarray)
+    return lambda _,  x: Pkarray.dot(x**ks)
+
+def get_PGF_first_derivate(Pk):
+    r'''
+    
+    TAKEN FROM: Epidemics on Networks - https://github.com/springer-math/Mathematics-of-Epidemics-on-Networks/blob/master/EoN/analytic.py
+    
+    Courtesy JC MILLER
+    
+    Given a degree distribution (as a dict), returns the probability 
+    generating function
+    
+    :Arguments:
+    **Pk** dict
+        Pk[k] is the proportion of nodes with degree k.
+    :Returns: 
+        
+    **psi** function
+            :math:`\psi(x) = \sum_k P_k[k] x^k`
+    '''
+    maxk = max(Pk.keys())
+    # ks = np.linspace(0,maxk, maxk+1)
+    ks = np.array(list(Pk.keys())[1:])
+    Pkarray = np.array(list(Pk.values())[1:])
+    # print(ks)
+    # print(Pkarray)
+    return lambda _,  x: Pkarray.dot(ks*x**(ks-1))
+
+def get_PGF_second_derivate(Pk):
+    r'''
+    
+    TAKEN FROM: Epidemics on Networks - https://github.com/springer-math/Mathematics-of-Epidemics-on-Networks/blob/master/EoN/analytic.py
+    
+    Courtesy JC MILLER
+    
+    Given a degree distribution (as a dict), returns the probability 
+    generating function
+    
+    :Arguments:
+    **Pk** dict
+        Pk[k] is the proportion of nodes with degree k.
+    :Returns: 
+        
+    **psi** function
+            :math:`\psi(x) = \sum_k P_k[k] x^k`
+    '''
+    maxk = max(Pk.keys())
+    # ks = np.linspace(0,maxk, maxk+1)
+    ks = np.array(list(Pk.keys())[2:])
+    Pkarray = np.array(list(Pk.values())[2:])
+    
+    return lambda _, x: Pkarray.dot((ks*(ks-1))*x**(ks-2))
+
