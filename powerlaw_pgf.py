@@ -12,7 +12,7 @@ def powerlaw_p_vec(alpha:float, max_deg:int):
     
     return dist
 
-def calc_g(p_vec, x):
+def calc_g(x, p_vec):
     """
     Probability generating function for generic powerlaw distribution
     """
@@ -21,7 +21,7 @@ def calc_g(p_vec, x):
         g_val = g_val + p_vec[k]*x**(k)
     return g_val
 
-def calc_g1(p_vec, x):
+def calc_g1(x, p_vec):
     """
     First derivative Probability generating function for generic powerlaw distribution
     """
@@ -30,7 +30,7 @@ def calc_g1(p_vec, x):
         g_val = g_val + (k)*p_vec[k]*x**(k-1)
     return g_val
 
-def calc_g2(p_vec, x):
+def calc_g2(x, p_vec):
     """
     Second derivate Probability generating function for generic powerlaw distribution
     """

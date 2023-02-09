@@ -7,6 +7,7 @@
 # You will have to obtain the first and second derivative of get_PGF yourself if you use this method
 
 import numpy as np
+from collections import Counter
 
 def get_Pk(G):
     r'''
@@ -52,7 +53,7 @@ def get_PGF(Pk):
     Pkarray = np.array([Pk.get(k,0) for k in ks])
     # print(ks)
     # print(Pkarray)
-    return lambda _,  x: Pkarray.dot(x**ks)
+    return lambda x: Pkarray.dot(x**ks)
 
 def get_PGF_first_derivate(Pk):
     r'''
@@ -74,11 +75,13 @@ def get_PGF_first_derivate(Pk):
     '''
     maxk = max(Pk.keys())
     # ks = np.linspace(0,maxk, maxk+1)
-    ks = np.array(list(Pk.keys())[1:])
-    Pkarray = np.array(list(Pk.values())[1:])
+    ks = np.array([k for k, v in Pk.items() if k not in [0,1]])
+    # ks = np.array(list([x for x in Pk.keys() if x not in [0,1]]))
+    # Pkarray = np.array(list(Pk.values()))
+    Pkarray = np.array([v for k, v in Pk.items() if k not in [0,1]])
     # print(ks)
     # print(Pkarray)
-    return lambda _,  x: Pkarray.dot(ks*x**(ks-1))
+    return lambda x: Pkarray.dot(ks*x**(ks-1))
 
 def get_PGF_second_derivate(Pk):
     r'''
@@ -100,8 +103,10 @@ def get_PGF_second_derivate(Pk):
     '''
     maxk = max(Pk.keys())
     # ks = np.linspace(0,maxk, maxk+1)
-    ks = np.array(list(Pk.keys())[2:])
-    Pkarray = np.array(list(Pk.values())[2:])
+    # ks = np.array(list([x for x in Pk.keys() if x not in [0,1,2]]))
+    ks = np.array([k for k, v in Pk.items() if k not in [0,1,2]])
+    # Pkarray = np.array(list(Pk.values()))
+    Pkarray = np.array([v for k, v in Pk.items() if k not in [0,1,2]])
     
-    return lambda _, x: Pkarray.dot((ks*(ks-1))*x**(ks-2))
+    return lambda x: Pkarray.dot((ks*(ks-1))*x**(ks-2))
 
