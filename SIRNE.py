@@ -36,7 +36,7 @@ class SIRNE:
 
 
         """
-        
+
         if isinstance(G, nx.Graph):
             degree_dist = pgf.get_Pk(G)
             self.calc_g = pgf.get_PGF(degree_dist)
@@ -95,7 +95,7 @@ class SIRNE:
 
         self.time = list(range(time))
 
-    def run_dynamic_simulation(self, r:float, mu:float, rho:float):
+    def run_dynamic_simulation(self, r: float, mu: float, rho: float):
         """
         Run a single simulation using scipy odeint function
 
@@ -112,7 +112,7 @@ class SIRNE:
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
 
-    def run_static_simulation(self, r:float, mu:float):
+    def run_static_simulation(self, r: float, mu: float):
         """
         Run a single simulation using scipy odeint function
 
