@@ -12,11 +12,8 @@ import types
 class SIRNE:
     def __init__(
         self,
-        r,
-        mu,
         epsilon,
         time,
-        ro=None,
         calc_g=None,
         calc_g1=None,
         calc_g2=None,
@@ -28,11 +25,8 @@ class SIRNE:
         Instantiate the Volz Semi Random Static Network (VN) or Volz/Mercer Neighbour Exchange SIR Model (NE)
 
         args
-            r: float - disease transmission to neightbor at a constant rate
-            mu: float - infectious indivduals recover at a constant rate
             epsilon - fraction of infectious nodes
             time: int - total steps
-            ro: float - rate at which neighbours are exchanged (OPTIONAL for VN, NEEDED for NE model)
             calc_g: types.FunctionType - function representing a probability generating function
             calc_g1: types.FunctionType - function representing a probability generating function's first derivative
             calc_g2: types.FunctionType - function representing a probability generating function's second derivative
@@ -42,9 +36,7 @@ class SIRNE:
 
 
         """
-        self.r = r
-        self.mu = mu
-        self.ro = ro
+        
         if isinstance(G, nx.Graph):
             degree_dist = pgf.get_Pk(G)
             self.calc_g = pgf.get_PGF(degree_dist)
@@ -103,35 +95,31 @@ class SIRNE:
 
         self.time = list(range(time))
 
-    def run_dynamic_simulation(self, **kwargs):
+    def run_dynamic_simulation(self, r:float, mu:float, rho:float):
         """
         Run a single simulation using scipy odeint function
 
-        kwargs:
-            r, mu, ro: float - change the parameter values versus what has been given in the init
+        args:
+            r: float - disease transmission to neightbor at a constant rate
+            mu: float - infectious indivduals recover at a constant rate
+            rho: float - rate at which neighbours are exchanged
         """
-
-        r = kwargs["r"] if "r" in kwargs.keys() else self.r
-        mu = kwargs["mu"] if "mu" in kwargs.keys() else self.mu
-        ro = kwargs["ro"] if "r" in kwargs.keys() else self.ro
 
         self.dyn_out = sp_int.odeint(
             self.dynamic_ode,
             self.dynamic_initial_state,
             self.time,
-            args=(r, mu, ro, self.calc_g, self.calc_g1, self.calc_g2),
+            args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
 
-    def run_static_simulation(self, **kwargs):
+    def run_static_simulation(self, r:float, mu:float):
         """
         Run a single simulation using scipy odeint function
 
-        kwargs:
-            r, mu: float - change the parameter values versus what has been given in the init
+        args:
+            r: float - disease transmission to neightbor at a constant rate
+            mu: float - infectious indivduals recover at a constant rate
         """
-
-        r = kwargs["r"] if "r" in kwargs.keys() else self.r
-        mu = kwargs["mu"] if "m" in kwargs.keys() else self.mu
 
         self.static_out = sp_int.odeint(
             self.static_semi_random,
