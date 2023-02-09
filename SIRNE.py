@@ -150,14 +150,7 @@ class SIRNE:
         y = list(range(6))  # zeros(6);
         y[0] = -rr * x[1] * x[0]
         y[1] = (
-            rr
-            * x[2]
-            * x[1]
-            * x[0]
-            * calc_g2(
-                x[0],
-            )
-            / calc_g1(x[0])
+            rr * x[2] * x[1] * x[0] * calc_g2(x[0]) / calc_g1(x[0])
             - rr * x[1] * (1 - x[1])
             - x[1] * mm
             + pp * (x[4] - x[1])
