@@ -109,7 +109,7 @@ class SIRNE:
         """
         self.dyn_out = sp_int.odeint(
             self.dynamic_ode,
-            self.initial_state,
+            self.static_initial_state,
             self.time,
             args=(self.r, self.mu, self.ro, self.calc_g, self.calc_g1, self.calc_g2),
         )
