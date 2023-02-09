@@ -97,32 +97,47 @@ class SIRNE:
             / (
                 1 - epsilon
             ),  # represents the probability that an arc with a susceptible ego has a susceptible alter
-            calc_g(1 - epsilon),  #
-            1 - calc_g(1 - epsilon),  #
+            self.calc_g(1 - epsilon),  #
+            1 - self.calc_g(1 - epsilon),  #
         ]
 
         self.time = list(range(time))
 
-    def run_dynamic_simulation(self):
+    def run_dynamic_simulation(self, **kwargs):
         """
         Run a single simulation using scipy odeint function
+
+        kwargs:
+            r, mu, ro: float - change the parameter values versus what has been given in the init
         """
+
+        r = kwargs["r"] if "r" in kwargs.keys() else self.r
+        mu = kwargs["mu"] if "mu" in kwargs.keys() else self.mu
+        ro = kwargs["ro"] if "r" in kwargs.keys() else self.ro
+
         self.dyn_out = sp_int.odeint(
             self.dynamic_ode,
-            self.static_initial_state,
+            self.dynamic_initial_state,
             self.time,
-            args=(self.r, self.mu, self.ro, self.calc_g, self.calc_g1, self.calc_g2),
+            args=(r, mu, ro, self.calc_g, self.calc_g1, self.calc_g2),
         )
 
-    def run_static_simulation(self):
+    def run_static_simulation(self, **kwargs):
         """
         Run a single simulation using scipy odeint function
+
+        kwargs:
+            r, mu: float - change the parameter values versus what has been given in the init
         """
+
+        r = kwargs["r"] if "r" in kwargs.keys() else self.r
+        mu = kwargs["mu"] if "m" in kwargs.keys() else self.mu
+
         self.static_out = sp_int.odeint(
             self.static_semi_random,
             self.static_initial_state,
             self.time,
-            args=(self.r, self.mu, self.calc_g, self.calc_g1, self.calc_g2),
+            args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
         )
 
     def dynamic_ode(self, x, t, rr, mm, pp, calc_g, calc_g1, calc_g2):
