@@ -7,6 +7,7 @@ import SimulatiViz as sv
 import numpy as np
 import networkx as nx
 import types
+from VolzFramework import VolzFramework
 
 class SIRNE(VolzFramework):
     """
