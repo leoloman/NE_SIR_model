@@ -8,6 +8,7 @@ import numpy as np
 import networkx as nx
 import types
 
+
 class VolzFramework:
     """
     args
@@ -19,7 +20,8 @@ class VolzFramework:
         probability_lambda: - variable which may be requried as a second parameter in the probability generating function
         G: nx.Graph - a network to obtain a probability generating function from
         degree_dist: dict - a dictionary of degree distributions, where the key is the degree and the value is the probability - this will be used to construct a probability generating function
-        """
+    """
+
     def __init__(
         self,
         epsilon,
@@ -31,9 +33,8 @@ class VolzFramework:
         G=None,
         degree_dist=None,
     ):
-        
         self.epsilon = epsilon
-        
+
         if isinstance(G, nx.Graph):
             degree_dist = pgf.get_Pk(G)
             self.calc_g = pgf.get_PGF(degree_dist)
@@ -68,38 +69,36 @@ class VolzFramework:
             self.calc_g = lambda x: calc_g(x, probability_lambda)
             self.calc_g1 = lambda x: calc_g1(x, probability_lambda)
             self.calc_g2 = lambda x: calc_g2(x, probability_lambda)
-            
+
         self._set_intial_states()
 
     def _set_inital_states(self):
         """
         Placeholder: Set the initial states
         """
-    
+
     def run_simulation(self):
         """
         Placeholder: Run a single simulation using scipy odeint function
         """
         pass
-    
+
     def ode(self):
         """
         Placeholder: function to hold all the equations in
         """
-        
+
 
 class SIRNE(VolzFramework):
     """
     Instantiate the  Volz/Mercer Neighbour Exchange SIR Model (NE)
     """
-       
+
     __doc__ += VolzFramework.__doc__
-        
+
     def _set_inital_states(self):
-        """
-        
-        """
-         # set the initial values
+        """ """
+        # set the initial values
         self.initial_state = [
             1 - self.epsilon,  #
             self.epsilon / (1 - self.epsilon),  #
@@ -117,7 +116,7 @@ class SIRNE(VolzFramework):
             r: float - disease transmission to neightbor at a constant rate
             mu: float - infectious indivduals recover at a constant rate
             rho: float - rate at which neighbours are exchanged
-            
+
         return:
             np.array - time x 5 matrix representing each state
         """
@@ -129,7 +128,6 @@ class SIRNE(VolzFramework):
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
 
-    
     def ode(self, x, t, rr, mm, pp, calc_g, calc_g1, calc_g2):
         # y[0]= change of theta
         # y[1]= change of p_infec
@@ -155,19 +153,17 @@ class SIRNE(VolzFramework):
         y[5] = rr * x[1] * x[0] * calc_g1(x[0]) - mm * x[5]
         return y
 
-    
 
 class SIRSR(VolzFramework):
     """
-    Instantiate the Volz Semi Random Static Network (SR) Model 
+    Instantiate the Volz Semi Random Static Network (SR) Model
     """
+
     __doc__ += VolzFramework.__doc__
-    
+
     def _set_inital_states(self):
-        """
-        
-        """
-         # set the initial values
+        """ """
+        # set the initial values
         self.initial_state = [
             1 - epsilon,  # theta
             epsilon / (1 - epsilon),  # force of infection
@@ -178,7 +174,7 @@ class SIRSR(VolzFramework):
             self.calc_g(1 - epsilon),  #
             1 - self.calc_g(1 - epsilon),  #
         ]
-    
+
     def run_simulation(self, r: float, mu: float) -> np.array:
         """
         Run a single simulation using scipy odeint function
@@ -186,7 +182,7 @@ class SIRSR(VolzFramework):
         args:
             r: float - disease transmission to neightbor at a constant rate
             mu: float - infectious indivduals recover at a constant rate
-            
+
         return:
             np.array - time x 5 matrix representing each state
         """
@@ -197,9 +193,7 @@ class SIRSR(VolzFramework):
             self.time,
             args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
         )
-    
-    
-    
+
     def ode(self, x, t, rr, mm, calc_g, calc_g1, calc_g2):
         # x[0] - theta
         # x[1] pi
