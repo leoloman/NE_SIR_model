@@ -11,6 +11,8 @@ import types
 class SIRNE(VolzFramework):
     """
     Instantiate the  Volz/Mercer Neighbour Exchange SIR Model (NE)
+    
+    Ref: https://royalsocietypublishing.org/doi/10.1098/rspb.2007.1159
     """
 
     __doc__ += VolzFramework.__doc__
@@ -48,6 +50,9 @@ class SIRNE(VolzFramework):
         )
 
     def ode(self, x, t, rr, mm, pp, calc_g, calc_g1, calc_g2):
+        """
+        Ref: https://royalsocietypublishing.org/doi/10.1098/rspb.2007.1159
+        """
         # y[0]= change of theta
         # y[1]= change of p_infec
         # y[2]= change of p_suscep
@@ -76,6 +81,8 @@ class SIRNE(VolzFramework):
 class SIRSR(VolzFramework):
     """
     Instantiate the Volz Semi Random Static Network (SR) Model
+    
+    Ref: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7080148/pdf/285_2007_Article_116.pdf
     """
 
     __doc__ += VolzFramework.__doc__
@@ -115,6 +122,9 @@ class SIRSR(VolzFramework):
         )
 
     def ode(self, x, t, rr, mm, calc_g, calc_g1, calc_g2):
+        """
+        Ref: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7080148/pdf/285_2007_Article_116.pdf
+        """
         # x[0] - theta
         # x[1] pi
         # x[2] ps
