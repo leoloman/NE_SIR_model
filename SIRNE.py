@@ -8,8 +8,18 @@ import numpy as np
 import networkx as nx
 import types
 
-
-class SIRNE:
+class VolzFramework:
+    """
+    args
+        epsilon - fraction of infectious nodes
+        time: int - total steps
+        calc_g: types.FunctionType - function representing a probability generating function
+        calc_g1: types.FunctionType - function representing a probability generating function's first derivative
+        calc_g2: types.FunctionType - function representing a probability generating function's second derivative
+        probability_lambda: - variable which may be requried as a second parameter in the probability generating function
+        G: nx.Graph - a network to obtain a probability generating function from
+        degree_dist: dict - a dictionary of degree distributions, where the key is the degree and the value is the probability - this will be used to construct a probability generating function
+        """
     def __init__(
         self,
         epsilon,
@@ -21,22 +31,9 @@ class SIRNE:
         G=None,
         degree_dist=None,
     ):
-        """
-        Instantiate the Volz Semi Random Static Network (VN) or Volz/Mercer Neighbour Exchange SIR Model (NE)
-
-        args
-            epsilon - fraction of infectious nodes
-            time: int - total steps
-            calc_g: types.FunctionType - function representing a probability generating function
-            calc_g1: types.FunctionType - function representing a probability generating function's first derivative
-            calc_g2: types.FunctionType - function representing a probability generating function's second derivative
-            probability_lambda: - variable which may be requried as a second parameter in the probability generating function
-            G: nx.Graph - a network to obtain a probability generating function from
-            degree_dist: dict - a dictionary of degree distributions, where the key is the degree and the value is the probability - this will be used to construct a probability generating function
-
-
-        """
-
+        
+        self.epsilon = epsilon
+        
         if isinstance(G, nx.Graph):
             degree_dist = pgf.get_Pk(G)
             self.calc_g = pgf.get_PGF(degree_dist)
@@ -71,31 +68,48 @@ class SIRNE:
             self.calc_g = lambda x: calc_g(x, probability_lambda)
             self.calc_g1 = lambda x: calc_g1(x, probability_lambda)
             self.calc_g2 = lambda x: calc_g2(x, probability_lambda)
+            
+        self._set_intial_states()
 
-        # set the initial values
-        self.dynamic_initial_state = [
-            1 - epsilon,  #
-            epsilon / (1 - epsilon),  #
-            (1 - 2 * epsilon) / (1 - epsilon),  #
-            self.calc_g(1 - epsilon),  # Susceptible
-            epsilon,  #
-            1 - self.calc_g(1 - epsilon),  # Infected
+    def _set_inital_states(self):
+        """
+        Placeholder: Set the initial states
+        """
+    
+    def run_simulation(self):
+        """
+        Placeholder: Run a single simulation using scipy odeint function
+        """
+        pass
+    
+    def ode(self):
+        """
+        Placeholder: function to hold all the equations in
+        """
+        
+
+class SIRNE(VolzFramework):
+    """
+    Instantiate the  Volz/Mercer Neighbour Exchange SIR Model (NE)
+    """
+       
+    __doc__ += VolzFramework.__doc__
+        
+    def _set_inital_states(self):
+        """
+        
+        """
+         # set the initial values
+        self.initial_state = [
+            1 - self.epsilon,  #
+            self.epsilon / (1 - self.epsilon),  #
+            (1 - 2 * self.epsilon) / (1 - self.epsilon),  #
+            self.calc_g(1 - self.epsilon),  # Susceptible
+            self.epsilon,  #
+            1 - self.calc_g(1 - self.epsilon),  # Infected
         ]
 
-        self.static_initial_state = [
-            1 - epsilon,  # theta
-            epsilon / (1 - epsilon),  # force of infection
-            (1 - 2 * epsilon)
-            / (
-                1 - epsilon
-            ),  # represents the probability that an arc with a susceptible ego has a susceptible alter
-            self.calc_g(1 - epsilon),  #
-            1 - self.calc_g(1 - epsilon),  #
-        ]
-
-        self.time = list(range(time))
-
-    def run_dynamic_simulation(self, r: float, mu: float, rho: float):
+    def run_simulation(self, r: float, mu: float, rho: float) -> np.array:
         """
         Run a single simulation using scipy odeint function
 
@@ -103,32 +117,20 @@ class SIRNE:
             r: float - disease transmission to neightbor at a constant rate
             mu: float - infectious indivduals recover at a constant rate
             rho: float - rate at which neighbours are exchanged
+            
+        return:
+            np.array - time x 5 matrix representing each state
         """
 
-        self.dyn_out = sp_int.odeint(
-            self.dynamic_ode,
-            self.dynamic_initial_state,
+        return sp_int.odeint(
+            self.ode,
+            self.initial_state,
             self.time,
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
 
-    def run_static_simulation(self, r: float, mu: float):
-        """
-        Run a single simulation using scipy odeint function
-
-        args:
-            r: float - disease transmission to neightbor at a constant rate
-            mu: float - infectious indivduals recover at a constant rate
-        """
-
-        self.static_out = sp_int.odeint(
-            self.static_semi_random,
-            self.static_initial_state,
-            self.time,
-            args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
-        )
-
-    def dynamic_ode(self, x, t, rr, mm, pp, calc_g, calc_g1, calc_g2):
+    
+    def ode(self, x, t, rr, mm, pp, calc_g, calc_g1, calc_g2):
         # y[0]= change of theta
         # y[1]= change of p_infec
         # y[2]= change of p_suscep
@@ -153,7 +155,52 @@ class SIRNE:
         y[5] = rr * x[1] * x[0] * calc_g1(x[0]) - mm * x[5]
         return y
 
-    def static_semi_random(self, x, t, rr, mm, calc_g, calc_g1, calc_g2):
+    
+
+class SIRSR(VolzFramework):
+    """
+    Instantiate the Volz Semi Random Static Network (SR) Model 
+    """
+    __doc__ += VolzFramework.__doc__
+    
+    def _set_inital_states(self):
+        """
+        
+        """
+         # set the initial values
+        self.initial_state = [
+            1 - epsilon,  # theta
+            epsilon / (1 - epsilon),  # force of infection
+            (1 - 2 * epsilon)
+            / (
+                1 - epsilon
+            ),  # represents the probability that an arc with a susceptible ego has a susceptible alter
+            self.calc_g(1 - epsilon),  #
+            1 - self.calc_g(1 - epsilon),  #
+        ]
+    
+    def run_simulation(self, r: float, mu: float) -> np.array:
+        """
+        Run a single simulation using scipy odeint function
+
+        args:
+            r: float - disease transmission to neightbor at a constant rate
+            mu: float - infectious indivduals recover at a constant rate
+            
+        return:
+            np.array - time x 5 matrix representing each state
+        """
+
+        return sp_int.odeint(
+            self.ode,
+            self.initial_state,
+            self.time,
+            args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
+        )
+    
+    
+    
+    def ode(self, x, t, rr, mm, calc_g, calc_g1, calc_g2):
         # x[0] - theta
         # x[1] pi
         # x[2] ps
