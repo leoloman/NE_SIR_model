@@ -18,7 +18,7 @@ class SIRNE(VolzFramework):
 
     __doc__ += VolzFramework.__doc__
 
-    def _set_inital_states(self):
+    def _set_initial_states(self):
         """ """
         # set the initial values
         self.initial_state = [
@@ -88,7 +88,7 @@ class SIRSR(VolzFramework):
 
     __doc__ += VolzFramework.__doc__
 
-    def _set_inital_states(self):
+    def _set_initial_states(self):
         """ 
         """
         # set the initial values
