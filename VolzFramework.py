@@ -7,9 +7,9 @@ import SimulatiViz as sv
 import numpy as np
 import networkx as nx
 import types
+from abc import ABC, abstractmethod
 
-
-class VolzFramework:
+class VolzFramework(ABC):
     """
     args
         epsilon - fraction of infectious nodes
@@ -37,10 +37,10 @@ class VolzFramework:
         self.time = list(range(time))
         
         if isinstance(G, nx.Graph):
-            degree_dist = pgf.get_Pk(G)
-            self.calc_g = pgf.get_PGF(degree_dist)
-            self.calc_g1 = pgf.get_PGF_first_derivate(degree_dist)
-            self.calc_g2 = pgf.get_PGF_second_derivate(degree_dist)
+            degree_dist_dev_G = pgf.get_Pk(G)
+            self.calc_g = pgf.get_PGF(degree_dist_dev_G)
+            self.calc_g1 = pgf.get_PGF_first_derivate(degree_dist_dev_G)
+            self.calc_g2 = pgf.get_PGF_second_derivate(degree_dist_dev_G)
 
         elif isinstance(degree_dist, dict):
             self.calc_g = pgf.get_PGF(degree_dist)
@@ -71,20 +71,25 @@ class VolzFramework:
             self.calc_g1 = lambda x: calc_g1(x, probability_lambda)
             self.calc_g2 = lambda x: calc_g2(x, probability_lambda)
 
-        self._set_inital_states()
-
-    def _set_inital_states(self):
+        self._set_initial_states()
+        
+    
+    @abstractmethod
+    def _set_initial_states(self):
         """
         Placeholder: Set the initial states
         """
 
+    @abstractmethod
     def run_simulation(self):
         """
         Placeholder: Run a single simulation using scipy odeint function
         """
         pass
-
+    
+    @abstractmethod
     def ode(self):
         """
         Placeholder: function to hold all the equations in
         """
+        pass
