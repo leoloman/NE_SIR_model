@@ -72,12 +72,11 @@ class EBCM(VolzFramework):
         
 class MFSHEBCM(VolzFramework):
     
-        """
-    Instantiate the first Edge Based Compartmental Model
+    """
+    Instantiate the Mean Field Social Hetergoenity Edge Based Compartmental Model
     
-    Ref https://royalsocietypublishing.org/doi/10.1098/rsif.2011.0403
-        https://arxiv.org/pdf/1106.6320
-        https://arxiv.org/pdf/0909.4485.pdf
+    Ref https://arxiv.org/pdf/1106.6320 page 7
+       
     """
 
     __doc__ += VolzFramework.__doc__
@@ -114,9 +113,7 @@ class MFSHEBCM(VolzFramework):
     
     def ode(self, x, beta, gamma, calc_g, calc_g1, calc_g2):
         """
-        Ref https://royalsocietypublishing.org/doi/10.1098/rsif.2011.0403
-            https://arxiv.org/pdf/1106.6320
-            https://arxiv.org/pdf/0909.4485.pdf
+        Ref https://arxiv.org/pdf/0909.4485.pdf page 7
         """
         
         y = list(range(2))
