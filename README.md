@@ -14,7 +14,14 @@ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2291166/pdf/rspb20071159.pdf
 https://royalsocietypublishing.org/doi/pdf/10.1098/rspb.2008.3003
 
 
+
 Future impelementations to work towards:
+
+https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0069162
+
+USEUFL: https://arxiv.org/pdf/1408.2701.pdf
+
+https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0044188&type=printable
 
 EDGE BASED 
 intro - https://royalsocietypublishing.org/doi/10.1098/rsif.2011.0403
@@ -58,3 +65,28 @@ https://academic.oup.com/jid/article/214/12/1800/2632613
 ERIKS MPOX mOlde - https://github.com/mrc-ide/spam.mpxv
 
 https://www.sciencedirect.com/science/article/pii/S1755436510000484
+
+
+
+pyVolz
+pyVol2
+VolzFramework
+VMFramework
+
+vnet
+volznet
+
+
+
+Maybe
+https://www.aimspress.com/article/doi/10.3934/mbe.2020035?viewType=HTML
+
+
+
+ebcm seir
+https://stars.library.ucf.edu/cgi/viewcontent.cgi?article=6134&context=etd
+
+
+https://www.hindawi.com/journals/isrn/2013/345618/
+
+https://www.sciencedirect.com/science/article/abs/pii/S1007570416303239
