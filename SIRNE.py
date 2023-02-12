@@ -9,6 +9,7 @@ import networkx as nx
 import types
 from VolzFramework import VolzFramework
 from SimulatiViz import SRResults, NEResults
+
 class SIRNE(VolzFramework):
     """
     Instantiate the  Volz/Mercer Neighbour Exchange SIR Model (NE)
