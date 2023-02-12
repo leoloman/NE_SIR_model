@@ -8,7 +8,7 @@ import numpy as np
 import networkx as nx
 import types
 from VolzFramework import VolzFramework
-
+from SimulatiViz import SRResults, NEResults
 class SIRNE(VolzFramework):
     """
     Instantiate the  Volz/Mercer Neighbour Exchange SIR Model (NE)
@@ -42,15 +42,17 @@ class SIRNE(VolzFramework):
         return:
             np.array - time x 5 matrix representing each state
         """
+        r0 = self.calc_r0(r, mu, rho)
         if print_r0:
-            print(self.calc_r0(r, mu, rho))
-            
-        return sp_int.odeint(
+            print(r0)
+        output = sp_int.odeint(
             self.ode,
             self.initial_state,
             self.time,
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
+        
+        return NEResults(output, dict(r = r, mu = mu, rho = rho), r0)
     
     def calc_r0(self, r:float, mu:float, rho:float):
         return (r/mu) * ((self.calc_g2(1)/self.calc_g1(1)) * (mu + rho) + rho)
@@ -121,12 +123,14 @@ class SIRSR(VolzFramework):
             np.array - time x 5 matrix representing each state
         """
 
-        return sp_int.odeint(
+        output = sp_int.odeint(
             self.ode,
             self.initial_state,
             self.time,
             args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
         )
+        
+        return SRResults(output, dict(r = r, mu = mu),  None )
 
     def ode(self, x, t, rr, mm, calc_g, calc_g1, calc_g2):
         """
