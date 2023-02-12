@@ -108,7 +108,7 @@ class MFSHEBCM(VolzFramework):
         return EBCMResults(output, dict(beta = beta, gamma = gamma), r0)
     
     def calc_r0(self, beta, gamma):
-        return (beta / (beta + gamma)) * ((self.calc_g1(1)**2 - self.calc_g1(1))/self.calc_g1(1))
+        return (beta /  gamma) * (self.calc_g1(1)**2/self.calc_g1(1))
     
     
     def ode(self, x, beta, gamma, calc_g, calc_g1, calc_g2):
