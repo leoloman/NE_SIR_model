@@ -30,7 +30,7 @@ class SIRNE(VolzFramework):
             1 - self.calc_g(1 - self.epsilon),  # Infected
         ]
 
-    def run_simulation(self, r: float, mu: float, rho: float) -> np.array:
+    def run_simulation(self, r: float, mu: float, rho: float, print_r0:bool = False) -> np.array:
         """
         Run a single simulation using scipy odeint function
 
@@ -42,13 +42,18 @@ class SIRNE(VolzFramework):
         return:
             np.array - time x 5 matrix representing each state
         """
-
+        if print_r0:
+            print(self.calc_r0(r, mu, rho))
+            
         return sp_int.odeint(
             self.ode,
             self.initial_state,
             self.time,
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
+    
+    def calc_r0(self, r:float, mu:float, rho:float):
+        return (r/mu) * ((self.calc_g2(1)/self.calc_g1(1)) * (mu + rho) + rho)
 
     def ode(self, x, t, rr, mm, pp, calc_g, calc_g1, calc_g2):
         """
@@ -77,7 +82,8 @@ class SIRNE(VolzFramework):
         )
         y[5] = rr * x[1] * x[0] * calc_g1(x[0]) - mm * x[5]
         return y
-
+    
+    
 
 class SIRSR(VolzFramework):
     """
