@@ -9,6 +9,7 @@ import networkx as nx
 import types
 from abc import ABC, abstractmethod
 
+
 class VolzFramework(ABC):
     """
     args
@@ -31,7 +32,7 @@ class VolzFramework(ABC):
     ):
         self.epsilon = epsilon
         self.time = list(range(time))
-        
+
         if isinstance(G, nx.Graph):
             degree_dist_dev_G = pgf.get_Pk(G)
             self.calc_g = pgf.get_PGF(degree_dist_dev_G)
@@ -46,7 +47,7 @@ class VolzFramework(ABC):
         elif (
             isinstance(calc_g, types.FunctionType)
             & isinstance(calc_g1, types.FunctionType)
-            & (isinstance(calc_g2, types.FunctionType) | (calc_g2 ==None))
+            & (isinstance(calc_g2, types.FunctionType) | (calc_g2 == None))
             & (probability_lambda == None)
         ):
             self.calc_g = calc_g
@@ -66,22 +67,21 @@ class VolzFramework(ABC):
             self.calc_g = lambda x: calc_g(x, probability_lambda)
             self.calc_g1 = lambda x: calc_g1(x, probability_lambda)
             self.calc_g2 = lambda x: calc_g2(x, probability_lambda)
-        
-    
+
     @abstractmethod
     def _set_initial_states(self):
         """
         Placeholder: Set the initial states
         """
         pass
-    
+
     @abstractmethod
     def run_simulation(self):
         """
         Placeholder: Run a single simulation using scipy odeint function
         """
         pass
-    
+
     @abstractmethod
     def ode(self):
         """
