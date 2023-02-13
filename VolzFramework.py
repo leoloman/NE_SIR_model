@@ -12,8 +12,6 @@ from abc import ABC, abstractmethod
 class VolzFramework(ABC):
     """
     args
-        epsilon - fraction of infectious nodes
-        time: int - total steps
         calc_g: types.FunctionType - function representing a probability generating function
         calc_g1: types.FunctionType - function representing a probability generating function's first derivative
         calc_g2: types.FunctionType - function representing a probability generating function's second derivative
@@ -24,8 +22,6 @@ class VolzFramework(ABC):
 
     def __init__(
         self,
-        epsilon,
-        time,
         calc_g=None,
         calc_g1=None,
         calc_g2=None,
@@ -50,7 +46,7 @@ class VolzFramework(ABC):
         elif (
             isinstance(calc_g, types.FunctionType)
             & isinstance(calc_g1, types.FunctionType)
-            & isinstance(calc_g2, types.FunctionType)
+            & (isinstance(calc_g2, types.FunctionType) | (calc_g2 ==None))
             & (probability_lambda == None)
         ):
             self.calc_g = calc_g
@@ -70,8 +66,6 @@ class VolzFramework(ABC):
             self.calc_g = lambda x: calc_g(x, probability_lambda)
             self.calc_g1 = lambda x: calc_g1(x, probability_lambda)
             self.calc_g2 = lambda x: calc_g2(x, probability_lambda)
-
-        self._set_initial_states()
         
     
     @abstractmethod
@@ -79,7 +73,8 @@ class VolzFramework(ABC):
         """
         Placeholder: Set the initial states
         """
-
+        pass
+    
     @abstractmethod
     def run_simulation(self):
         """

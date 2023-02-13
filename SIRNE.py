@@ -19,19 +19,19 @@ class SIRNE(VolzFramework):
 
     __doc__ += VolzFramework.__doc__
 
-    def _set_initial_states(self):
+    def _set_initial_states(self, epsilon):
         """ """
         # set the initial values
         self.initial_state = [
-            1 - self.epsilon,  #
-            self.epsilon / (1 - self.epsilon),  #
-            (1 - 2 * self.epsilon) / (1 - self.epsilon),  #
-            self.calc_g(1 - self.epsilon),  # Susceptible
-            self.epsilon,  #
-            1 - self.calc_g(1 - self.epsilon),  # Infected
+            1 - epsilon,  #
+            epsilon / (1 - epsilon),  #
+            (1 - 2 * epsilon) / (1 - epsilon),  #
+            self.calc_g(1 - epsilon),  # Susceptible
+            epsilon,  #
+            1 - self.calc_g(1 - epsilon),  # Infected
         ]
 
-    def run_simulation(self, r: float, mu: float, rho: float, print_r0:bool = False) -> np.array:
+    def run_simulation(self, r: float, mu: float, rho: float, epsilon: float, timesteps: int) -> np.array:
         """
         Run a single simulation using scipy odeint function
 
@@ -39,17 +39,22 @@ class SIRNE(VolzFramework):
             r: float - disease transmission to neightbor at a constant rate
             mu: float - infectious indivduals recover at a constant rate
             rho: float - rate at which neighbours are exchanged
+            epsilon - fraction of infectious nodes
+            timesteps: int - total steps
 
         return:
             np.array - time x 5 matrix representing each state
         """
         r0 = self.calc_r0(r, mu, rho)
-        if print_r0:
-            print(r0)
+        
+        time = list(range(timestemps)
+                    
+        inital_state = self._set_initial_states(epsilon)
+        
         output = sp_int.odeint(
             self.ode,
-            self.initial_state,
-            self.time,
+            initial_state,
+            time,
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
         
@@ -97,37 +102,43 @@ class SIRSR(VolzFramework):
 
     __doc__ += VolzFramework.__doc__
 
-    def _set_initial_states(self):
+    def _set_initial_states(self, epsilon):
         """ 
         """
         # set the initial values
         self.initial_state = [
-            1 - self.epsilon,  # theta
-            self.epsilon / (1 - self.epsilon),  # force of infection
-            (1 - 2 * self.epsilon)
+            1 - epsilon,  # theta
+            epsilon / (1 - epsilon),  # force of infection
+            (1 - 2 * epsilon)
             / (
-                1 - self.epsilon
+                1 - epsilon
             ),  # represents the probability that an arc with a susceptible ego has a susceptible alter
-            self.calc_g(1 - self.epsilon),  #
-            1 - self.calc_g(1 - self.epsilon),  #
+            self.calc_g(1 - epsilon),  #
+            1 - self.calc_g(1 - epsilon),  #
         ]
 
-    def run_simulation(self, r: float, mu: float) -> np.array:
+    def run_simulation(self, r: float, mu: float, epsilon: float, timesteps: int) -> np.array:
         """
         Run a single simulation using scipy odeint function
 
         args:
             r: float - disease transmission to neightbor at a constant rate
             mu: float - infectious indivduals recover at a constant rate
+            epsilon - fraction of infectious nodes
+            timesteps: int - total steps
 
         return:
             np.array - time x 5 matrix representing each state
         """
-
+        
+        time = list(range(timesteps)
+                    
+        inital_state = self._set_initial_states(epsilon)
+            
         output = sp_int.odeint(
             self.ode,
-            self.initial_state,
-            self.time,
+            initial_state,
+            time,
             args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
         )
         

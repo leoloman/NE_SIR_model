@@ -28,18 +28,22 @@ class EBCM(VolzFramework):
         """
         Set the initial states
         """
-        self.initial_state = [1 - self.epsilon, 0]
+        return [1 - epsilon, 0]
         
-    def run_simulation(self, beta, gamma):
+    def run_simulation(self, beta, gamma, epsilon, timesteps):
         """
         Run a single simulation using scipy odeint function
         """
         
         r0 = self.calc_r0(beta, gamma)
         
+        initial_state = self._set_initial_states(epsilon)
+        
+        time = list(range(timesteps))
+        
         output = sp_int.odeint(self.ode,
-            self.initial_state,
-            self.time,
+            initial_state,
+            time,
             args=(beta, gamma, self.calc_g, self.calc_g1, self.calc_g2),
         )
         # add susceptible
@@ -83,22 +87,26 @@ class MFSHEBCM(VolzFramework):
     __doc__ += VolzFramework.__doc__
 
 
-    def _set_initial_states(self):
+    def _set_initial_states(self, epsilon):
         """
         Set the initial states
         """
-        self.initial_state = [1 - self.epsilon, 0]
+        return [1 - epsilon, 0]
         
-    def run_simulation(self, beta, gamma):
+    def run_simulation(self, beta, gamma, epsilon, timesteps):
         """
         Run a single simulation using scipy odeint function
         """
         
         r0 = self.calc_r0(beta, gamma)
         
+        initial_state = self._set_initial_states(epsilon)
+        
+        time = list(range(timesteps))
+        
         output = sp_int.odeint(self.ode,
-            self.initial_state,
-            self.time,
+            initial_state,
+            time,
             args=(beta, gamma, self.calc_g, self.calc_g1, self.calc_g2),
         )
         # add susceptible
@@ -110,7 +118,6 @@ class MFSHEBCM(VolzFramework):
     
     def calc_r0(self, beta, gamma):
         return (beta /  gamma) * (self.calc_g1(1)**2/self.calc_g1(1))
-    
     
     def ode(self, x, t,  beta, gamma, calc_g, calc_g1, calc_g2):
         """
@@ -126,3 +133,86 @@ class MFSHEBCM(VolzFramework):
         
         return y
     
+    
+
+class DynamicFixedDegree(VolzFramework):
+    
+    """
+    https://arxiv.org/pdf/1106.6320.pdf page 8
+    """
+    
+    
+    def _set_initial_states(self, epsilon, eta):
+        """
+        Set the initial states
+        """
+        
+        theta = 1 - epsilon
+        pi_S = (theta* self.calc_g1(theta))/self.calc_g1(1)
+        pi_R = 0
+        pi_I = 1 - pi_S - pi_R
+        psi_S = eta * pi_R
+        psi_I = eta*pi_I
+        return [theta, 
+                              psi_I, # psi i
+                              pi_S, # psi s
+                              0, # pi r
+                              0 ]# r
+        
+    def run_simulation(self, beta, eta, gamma, epsilon, timesteps):
+        """
+        Run a single simulation using scipy odeint function
+        """
+        
+        initial_states = self._set_initial_states(eta)
+        
+        r0 = self.calc_r0(beta, eta, gamma)
+        
+        time = list(range(timesteps))
+        
+        output = sp_int.odeint(self.ode,
+            initial_states,
+            self.time,
+            args=(beta, eta, gamma, self.calc_g, self.calc_g1, self.calc_g2),
+        )
+        return output
+        # add susceptible
+        #output = np.hstack((output, np.array([[self.calc_g(x)] for x in output[:,0]])))
+        # add infected
+        #output = np.hstack((output, np.array([[1 - x[1] - x[2] ] for x in output])))
+        
+        #return EBCMResults(output, dict(beta = beta, gamma = gamma), r0)
+    
+    def ode(self, x, t,  beta, eta, gamma, calc_g, calc_g1, calc_g2):
+        """
+        Ref https://arxiv.org/pdf/1106.6320 page 7
+        """
+        # x[0] theta
+        # x[1] psi i
+        # x[2] psi s
+        # x[3] pi r
+        # x[4] r
+        y = list(range(5))
+    
+        y[0] = -beta * x[1]
+        
+        pi_S = (x[0] * calc_g1(x[0]))/(calc_g1(1))
+        
+        pi_I = 1 - x[3] - pi_S 
+        
+        y[3] = gamma* pi_I
+        
+        y[2] = - beta * x[1] * x[2] * (calc_g2(x[0])/calc_g1(x[0])) + eta * x[0] * pi_S - eta*x[2]
+        
+        y[1] = beta * x[1] * x[2] * (calc_g2(x[0])/calc_g1(x[0])) + eta * x[0] * pi_I - (beta + gamma + eta) * x[1]
+        
+        S = calc_g(x[0])
+        
+        I = 1 - S - x[4]
+        
+        y[4] = gamma*I
+        
+        return y
+    
+    def calc_r0(self, beta, eta, gamma):
+        return (beta/(beta + eta+ gamma))*( ((eta+gamma)/gamma) * ((self.calc_g1(1)**2 * self.calc_g1(1))/self.calc_g1(1)) + (eta/gamma))
