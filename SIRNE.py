@@ -106,7 +106,7 @@ class SIRSR(VolzFramework):
         """ 
         """
         # set the initial values
-        self.initial_state = [
+        return [
             1 - epsilon,  # theta
             epsilon / (1 - epsilon),  # force of infection
             (1 - 2 * epsilon)
@@ -131,7 +131,7 @@ class SIRSR(VolzFramework):
             np.array - time x 5 matrix representing each state
         """
         
-        time = list(range(timesteps)
+        time = list(range(timesteps))
                     
         inital_state = self._set_initial_states(epsilon)
             
