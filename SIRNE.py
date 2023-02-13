@@ -22,7 +22,7 @@ class SIRNE(VolzFramework):
     def _set_initial_states(self, epsilon):
         """ """
         # set the initial values
-        self.initial_state = [
+        return [
             1 - epsilon,  #
             epsilon / (1 - epsilon),  #
             (1 - 2 * epsilon) / (1 - epsilon),  #
