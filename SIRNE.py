@@ -58,7 +58,7 @@ class SIRNE(VolzFramework):
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
         
-        return NEResults(output, dict(r = r, mu = mu, rho = rho), r0)
+        return NEResults(output, dict(r = r, mu = mu, rho = rho, epsilon = epsilon), r0)
     
     def calc_r0(self, r:float, mu:float, rho:float):
         return (r/mu) * ((self.calc_g2(1)/self.calc_g1(1)) * (mu + rho) + rho)
@@ -142,7 +142,7 @@ class SIRSR(VolzFramework):
             args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
         )
         
-        return SRResults(output, dict(r = r, mu = mu),  None )
+        return SRResults(output, dict(r = r, mu = mu, epsilon = epsilon),  None )
 
     def ode(self, x, t, rr, mm, calc_g, calc_g1, calc_g2):
         """

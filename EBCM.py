@@ -51,7 +51,7 @@ class EBCM(VolzFramework):
         # add infected
         output = np.hstack((output, np.array([[1 - x[1] - x[2] ] for x in output])))
         
-        return EBCMResults(output, dict(beta = beta, gamma = gamma), r0)
+        return EBCMResults(output, dict(beta = beta, gamma = gamma, epsilon = epsilon), r0)
     
     def calc_r0(self, beta, gamma):
         return (beta / (beta + gamma)) * ((self.calc_g1(1)**2 - self.calc_g1(1))/self.calc_g1(1))
@@ -114,7 +114,7 @@ class MFSHEBCM(VolzFramework):
         # add infected
         output = np.hstack((output, np.array([[1 - x[1] - x[2] ] for x in output])))
         
-        return EBCMResults(output, dict(beta = beta, gamma = gamma), r0)
+        return EBCMResults(output, dict(beta = beta, gamma = gamma, epsilon = epsilon), r0)
     
     def calc_r0(self, beta, gamma):
         return (beta /  gamma) * (self.calc_g1(1)**2/self.calc_g1(1))
