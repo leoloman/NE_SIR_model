@@ -10,6 +10,7 @@ import types
 from abc import ABC, abstractmethod
 from SimulatiViz import EBCMResults
 from VolzFramework import VolzFramework
+import math
 
 class EBCM(VolzFramework):
     """
@@ -27,7 +28,7 @@ class EBCM(VolzFramework):
         """
         Set the initial states
         """
-        self.intial_state = [1 - self.epsilon, 0]
+        self.initial_state = [1 - self.epsilon, 0]
         
     def run_simulation(self, beta, gamma):
         """
@@ -52,7 +53,7 @@ class EBCM(VolzFramework):
         return (beta / (beta + gamma)) * ((self.calc_g1(1)**2 - self.calc_g1(1))/self.calc_g1(1))
     
     
-    def ode(self, x, beta, gamma, calc_g, calc_g1, calc_g2):
+    def ode(self, x,t, beta, gamma, calc_g, calc_g1, calc_g2):
         """
         Ref https://royalsocietypublishing.org/doi/10.1098/rsif.2011.0403
             https://arxiv.org/pdf/1106.6320
@@ -86,7 +87,7 @@ class MFSHEBCM(VolzFramework):
         """
         Set the initial states
         """
-        self.intial_state = [1 - self.epsilon, 0]
+        self.initial_state = [1 - self.epsilon, 0]
         
     def run_simulation(self, beta, gamma):
         """
@@ -111,9 +112,9 @@ class MFSHEBCM(VolzFramework):
         return (beta /  gamma) * (self.calc_g1(1)**2/self.calc_g1(1))
     
     
-    def ode(self, x, beta, gamma, calc_g, calc_g1, calc_g2):
+    def ode(self, x, t,  beta, gamma, calc_g, calc_g1, calc_g2):
         """
-        Ref https://arxiv.org/pdf/0909.4485.pdf page 7
+        Ref https://arxiv.org/pdf/1106.6320 page 7
         """
         
         y = list(range(2))
