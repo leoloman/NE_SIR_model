@@ -24,21 +24,21 @@ class SimResults(ABC):
 class EBCMResults(SimResults):
     
     def SIR_graph(self):
-        plt.plot(self.output_3[:,1], label = 'R')
-        plt.plot(self.output_3[:,2], label = 's')
-        plt.plot(self.output_3[:,3], label = 'I')
+        plt.plot(self.output[:,1], label = 'R')
+        plt.plot(self.output[:,2], label = 's')
+        plt.plot(self.output[:,3], label = 'I')
         plt.legend()
     
     def cumulative_incidence(self):
-        plt.plot(self.output_3[:,1]+self.output_3[:,3], label = 'R')
+        plt.plot(self.output[:,1]+self.output[:,3], label = 'R')
         plt.legend()
     
-    @abstractmethod
+    
     def full_simulation(self):
         plt.plot(self.output[:,0], label = 'theta')
-        plt.plot(self.output_3[:,1], label = 'R')
-        plt.plot(self.output_3[:,2], label = 's')
-        plt.plot(self.output_3[:,3], label = 'I')
+        plt.plot(self.output[:,1], label = 'R')
+        plt.plot(self.output[:,2], label = 's')
+        plt.plot(self.output[:,3], label = 'I')
         plt.legend()
         
         
