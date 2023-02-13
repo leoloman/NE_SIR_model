@@ -1,5 +1,5 @@
 # TAKEN FROM: Epidemics on Networks - https://github.com/springer-math/Mathematics-of-Epidemics-on-Networks/blob/master/EoN/analytic.py
-    
+
 # Courtesy JC MILLER
 
 # The following functions can be used to obtain the probability generating function for a given distribution
@@ -9,87 +9,90 @@
 import numpy as np
 from collections import Counter
 
+
 def get_Pk(G):
-    r'''
-    
+    r"""
+
     TAKEN FROM: Epidemics on Networks - https://github.com/springer-math/Mathematics-of-Epidemics-on-Networks/blob/master/EoN/analytic.py
-    
+
     Courtesy JC MILLER
-    
-    Used in several places so that we can input a graph and then we 
+
+    Used in several places so that we can input a graph and then we
     can call the methods that depend on the degree distribution
-    :Arguments: 
+    :Arguments:
     **G** networkx Graph
-    
-    :Returns: 
+
+    :Returns:
     **Pk** dict
         ``Pk[k]`` is the proportion of nodes with degree ``k``.
-    '''
+    """
 
     Nk = Counter(dict(G.degree()).values())
-    Pk = {x:Nk[x]/float(G.order()) for x in Nk.keys()}
+    Pk = {x: Nk[x] / float(G.order()) for x in Nk.keys()}
     return Pk
 
 
 def get_PGF(Pk):
-    r'''
-    
+    r"""
+
     TAKEN FROM: Epidemics on Networks - https://github.com/springer-math/Mathematics-of-Epidemics-on-Networks/blob/master/EoN/analytic.py
-    
-    Given a degree distribution (as a dict), returns the probability 
+
+    Given a degree distribution (as a dict), returns the probability
     generating function
-    
+
     :Arguments:
     **Pk** dict
         Pk[k] is the proportion of nodes with degree k.
-    :Returns: 
-        
+    :Returns:
+
     **psi** function
             :math:`\psi(x) = \sum_k P_k[k] x^k`
-    '''
+    """
     maxk = max(Pk.keys())
-    ks = np.linspace(0,maxk, maxk+1)
-    Pkarray = np.array([Pk.get(k,0) for k in ks])
+    ks = np.linspace(0, maxk, maxk + 1)
+    Pkarray = np.array([Pk.get(k, 0) for k in ks])
     return lambda x: Pkarray.dot(x**ks)
 
+
 def get_PGF_first_derivate(Pk):
-    r'''
-    
+    r"""
+
     TAKEN FROM: Epidemics on Networks - https://github.com/springer-math/Mathematics-of-Epidemics-on-Networks/blob/master/EoN/analytic.py
-    
+
     Given a degree distribution (as a dict) returns the function
     :math:`\psi'(x)`
-    
-    :Arguments: 
+
+    :Arguments:
     **Pk** dict
         Pk[k] is the proportion of nodes with degree k.
-    :Returns: 
+    :Returns:
     **psiPrime** (function)
         :math:`\psi'(x) = \sum_k k P_k[k] x^{k-1}`
-    '''
+    """
     maxk = max(Pk.keys())
-    ks = np.linspace(0,maxk, maxk+1)
-    Pkarray = np.array([Pk.get(k,0) for k in ks])
+    ks = np.linspace(0, maxk, maxk + 1)
+    Pkarray = np.array([Pk.get(k, 0) for k in ks])
 
-    return lambda x: Pkarray.dot(ks*x**(ks-1))
+    return lambda x: Pkarray.dot(ks * x ** (ks - 1))
+
 
 def get_PGF_second_derivate(Pk):
-    r'''
-    
+    r"""
+
     TAKEN FROM: Epidemics on Networks - https://github.com/springer-math/Mathematics-of-Epidemics-on-Networks/blob/master/EoN/analytic.py
-    
-    Given a degree distribution (as a dict) returns the function 
+
+    Given a degree distribution (as a dict) returns the function
     :math:`\psi''(x)`
-    
-    :Arguments: 
+
+    :Arguments:
     **Pk** dict
         Pk[k] is the proportion of nodes with degree k.
-    :Returns: 
-        
+    :Returns:
+
     **psiDPrime** function
         :math:`\psi''(x) = \sum_k k(k-1)P_k[k] x^{k-2}`
-    '''
+    """
     maxk = max(Pk.keys())
-    ks = np.linspace(0,maxk, maxk+1)
-    Pkarray = np.array([Pk.get(k,0) for k in ks])
-    return lambda x: Pkarray.dot(ks*(ks-1)*x**(ks-2))
+    ks = np.linspace(0, maxk, maxk + 1)
+    Pkarray = np.array([Pk.get(k, 0) for k in ks])
+    return lambda x: Pkarray.dot(ks * (ks - 1) * x ** (ks - 2))
