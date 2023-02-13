@@ -47,7 +47,7 @@ class SIRNE(VolzFramework):
         """
         r0 = self.calc_r0(r, mu, rho)
         
-        time = list(range(timestemps)
+        time = list(range(timestemps))
                     
         inital_state = self._set_initial_states(epsilon)
         
