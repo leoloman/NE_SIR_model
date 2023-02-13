@@ -10,10 +10,11 @@ import types
 from VolzFramework import VolzFramework
 from SimulatiViz import SRResults, NEResults
 
+
 class SIRNE(VolzFramework):
     """
     Instantiate the  Volz/Mercer Neighbour Exchange SIR Model (NE)
-    
+
     Ref: https://royalsocietypublishing.org/doi/10.1098/rspb.2007.1159
     """
 
@@ -31,7 +32,9 @@ class SIRNE(VolzFramework):
             1 - self.calc_g(1 - epsilon),  # Infected
         ]
 
-    def run_simulation(self, r: float, mu: float, rho: float, epsilon: float, timesteps: int) -> np.array:
+    def run_simulation(
+        self, r: float, mu: float, rho: float, epsilon: float, timesteps: int
+    ) -> np.array:
         """
         Run a single simulation using scipy odeint function
 
@@ -46,22 +49,22 @@ class SIRNE(VolzFramework):
             np.array - time x 5 matrix representing each state
         """
         r0 = self.calc_r0(r, mu, rho)
-        
+
         time = list(range(timestemps))
-                    
+
         inital_state = self._set_initial_states(epsilon)
-        
+
         output = sp_int.odeint(
             self.ode,
             initial_state,
             time,
             args=(r, mu, rho, self.calc_g, self.calc_g1, self.calc_g2),
         )
-        
-        return NEResults(output, dict(r = r, mu = mu, rho = rho, epsilon = epsilon), r0)
-    
-    def calc_r0(self, r:float, mu:float, rho:float):
-        return (r/mu) * ((self.calc_g2(1)/self.calc_g1(1)) * (mu + rho) + rho)
+
+        return NEResults(output, dict(r=r, mu=mu, rho=rho, epsilon=epsilon), r0)
+
+    def calc_r0(self, r: float, mu: float, rho: float):
+        return (r / mu) * ((self.calc_g2(1) / self.calc_g1(1)) * (mu + rho) + rho)
 
     def ode(self, x, t, rr, mm, pp, calc_g, calc_g1, calc_g2):
         """
@@ -90,21 +93,19 @@ class SIRNE(VolzFramework):
         )
         y[5] = rr * x[1] * x[0] * calc_g1(x[0]) - mm * x[5]
         return y
-    
-    
+
 
 class SIRSR(VolzFramework):
     """
     Instantiate the Volz Semi Random Static Network (SR) Model
-    
+
     Ref: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7080148/pdf/285_2007_Article_116.pdf
     """
 
     __doc__ += VolzFramework.__doc__
 
     def _set_initial_states(self, epsilon):
-        """ 
-        """
+        """ """
         # set the initial values
         return [
             1 - epsilon,  # theta
@@ -117,7 +118,9 @@ class SIRSR(VolzFramework):
             1 - self.calc_g(1 - epsilon),  #
         ]
 
-    def run_simulation(self, r: float, mu: float, epsilon: float, timesteps: int) -> np.array:
+    def run_simulation(
+        self, r: float, mu: float, epsilon: float, timesteps: int
+    ) -> np.array:
         """
         Run a single simulation using scipy odeint function
 
@@ -130,19 +133,19 @@ class SIRSR(VolzFramework):
         return:
             np.array - time x 5 matrix representing each state
         """
-        
+
         time = list(range(timesteps))
-                    
+
         inital_state = self._set_initial_states(epsilon)
-            
+
         output = sp_int.odeint(
             self.ode,
             initial_state,
             time,
             args=(r, mu, self.calc_g, self.calc_g1, self.calc_g2),
         )
-        
-        return SRResults(output, dict(r = r, mu = mu, epsilon = epsilon),  None )
+
+        return SRResults(output, dict(r=r, mu=mu, epsilon=epsilon), None)
 
     def ode(self, x, t, rr, mm, calc_g, calc_g1, calc_g2):
         """
